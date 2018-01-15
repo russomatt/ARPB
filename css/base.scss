@@ -1,0 +1,35 @@
+$main-type-color : #000;
+$main-typeface : 'Helvetica Neue', Helvetica, arial, sans-serif;
+
+body {
+    font-family: $main-typeface;
+    color: $main-type-color;
+}
+.control-box {
+    background: red;
+    width: 20em;
+    margin: 2em 2em;
+    padding: 1em;
+
+    h1 {
+        margin: 0;
+    }
+    h2 {
+        margin: 0;
+        font-weight: 400;
+    }
+    .time-slider {
+        width: 100%;
+    }
+}
+.testContainer {
+    img {
+        width: 500px;
+        height: auto;
+    }
+    .gradient {
+        width: 500px;
+        height: 332px;
+        border: 1px solid red;
+    }
+}
