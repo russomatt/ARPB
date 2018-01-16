@@ -7,5 +7,5 @@ require("./css/base.scss");
 
 
 render((
-  <ImageTest/>
+  <App/>
 ), document.getElementById('app-container'));
