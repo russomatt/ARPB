@@ -4,7 +4,10 @@ import Tile from './Tile.js';
 import { getSelectedYear } from '../utils/utils.js';
 import { getSelectedMonth } from '../utils/utils.js';
 import { getDisplayedDates } from '../utils/utils.js';
+import { getDisplayedColors } from '../utils/utils.js';
 import { splitDate } from '../utils/utils.js';
+import { displayFullDay } from '../utils/utils.js';
+import { getSelectedDay } from '../utils/utils.js';
 
 export default class TileContainer extends React.Component {
     constructor(props) {
@@ -16,6 +19,7 @@ export default class TileContainer extends React.Component {
                 selectedDay: this.props.data.selectedDay,
                 selectedMonth: this.props.data.selectedMonth,
                 selectedYear: this.props.data.selectedYear,
+                selectedTime: this.props.data.selectedTime,
             };
     }
     componentWillReceiveProps(nextProps) {
@@ -26,6 +30,7 @@ export default class TileContainer extends React.Component {
                 selectedDay: nextProps.data.selectedDay,
                 selectedMonth: nextProps.data.selectedMonth,
                 selectedYear: nextProps.data.selectedYear,
+                selectedTime: nextProps.data.selectedTime,
 
          });  
     }
@@ -41,25 +46,36 @@ export default class TileContainer extends React.Component {
         var SelectedYearData = getSelectedYear(that.state.data.data, this.state.selectedYear);
         var SelectedMonthData = getSelectedMonth(SelectedYearData, this.state.selectedMonth);
         var displayData = getDisplayedDates(SelectedMonthData, this.props.displayMode, this.state.selectedDay, this.state.selectedMonth, this.state.selectedYear);
+        var selectedDayData = getSelectedDay(days, this.state.selectedDay)
+        // var test = displayFullDay(selectedDayData);
+        // var date = splitDate(day.day);
 
         var tileNodes = displayData.map(function(day,i) {
-
-            var colors = day.times[0].colors;
+            // console.log(day.times)
+            var hasColors = true;
+            var colorsAtTime = getDisplayedColors(day.times, that.state.selectedTime);
+            if(colorsAtTime.length == 0) {
+                hasColors = false;
+                colorsAtTime = ['rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)'];
+            }
+            // console.log(colorsAtTime)
+            // var colors = day.times[0].colors;
             var date = splitDate(day.day);
             var selectedTime = day.times[0].time;
 
             return (
                 <Tile
                     key={ 'tile-' + i }
-                    gradients={ colors }
+                    gradients={ colorsAtTime }
                     day={ date.day }
                     month={ date.month }
                     year={ date.year }
-                    selectedTime={ selectedTime }
+                    selectedTime={ that.state.selectedTime }
+                    hasColors={ hasColors }
                 />
             )
         });
-        return (
+        return ( 
             <div className={ containerClasses }>
                 { tileNodes }
             </div>

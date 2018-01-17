@@ -107,6 +107,39 @@ export function getDisplayedDates(data, displayMode, day, month, year){
 
 }
 
+// return the day's colors at the selected time
+export function getDisplayedColors(data, time){
+	// var emptyArr = ['rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)']
+	for (var i = 0; i < data.length; i++ ) {
+		// console.log(data[i].time)
+		if(data[i].time == time) {
+			return data[i].colors;
+		} 
+	}
+	return [];
+}
+
+export function displayFullDay(day) {
+	console.log(day)
+	// var dayColors = [];
+	// for (var i = 0; i < data.length; i++ ) {
+	// 	if(data[i].day == day) {
+	// 		return data[i].colors;
+	// 	} 
+	// }
+}
+
+export function getSelectedDay(data, day) {
+	var selectedDateIdx = -1;
+	for (var i = 0; i < data.length; i++ ) {
+		if( data[i].day == day ) {
+			selectedDateIdx = i;
+		}
+	}
+	return data[selectedDateIdx];
+}
+
+
 // take date in form of dd.mm.yy and split it into a date object
 export function splitDate(date){
 
@@ -115,4 +148,5 @@ export function splitDate(date){
 
 	return dateObj;
 }
+
 

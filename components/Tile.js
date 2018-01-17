@@ -5,21 +5,30 @@ export default class Tile extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            value: null,
+                    colors :  this.props.gradients,
+                    day :  this.props.day,
+                    month :  this.props.month,
+                    year :  this.props.year,
+                    selectedTime :  this.props.selectedTime,
+                    hasColors :  this.props.hasColors
         };
     }
 
     render() {
-
-        var gradientNodes = this.props.gradients.map(function(gradient, i) {
-
+        var that = this;
+        var gradientNodes = this.props.gradients.map(function(colors, i) {
+            var gradient = 'linear-gradient('+colors+')';
             var styles = { background: gradient };
+            if(that.props.hasColors) {
+                return (
+                    <div className="tile-gradient" key={'key-' + i} style={ styles }>
+                    </div>
+                );
+            } else {
+                return ("");
+            }
 
-            return (
-                <div className="tile-gradient" key={'key-' + i} style={ styles }>
-                </div>
-            );
-        })
+        });
 
         return (
             <div className="tile">
@@ -44,6 +53,9 @@ export default class Tile extends React.Component {
                     <div className="time">
                         { this.props.selectedTime}
                     </div>
+                </div>
+                <div className={this.props.hasColors ? 'hidden' : 'no-data'}>
+                    No Data
                 </div>
                 { gradientNodes }
             </div>

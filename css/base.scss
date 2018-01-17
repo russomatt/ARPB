@@ -1,7 +1,7 @@
 $main-type-color : #000;
 $main-typeface : 'Helvetica Neue', Helvetica, arial, sans-serif;
-h1 {
-    color: red;
+.hidden {
+    display: none;
 }
 body {
     font-family: $main-typeface;
@@ -93,5 +93,13 @@ body {
         .tile {
             width: 100%;
         }
+    }
+    .no-data {
+        color: #fff;
+        opacity: 0.2;
+        position: absolute;
+        top: 40%;
+        text-align: center;
+        width: 100%;
     }
 }

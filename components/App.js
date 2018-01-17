@@ -13,17 +13,32 @@ export default class App extends React.Component {
             selectedMonth: 'october',
             selectedYear: '2016',
             displayMode: 'week',
+            selectedTime: '00:00',
         };
     }
     updateDay(day) {
         this.setState({selectedDay : day});
+        // console.log(this.state)
+    }
+    updateMonth(month) {
+        this.setState({selectedMonth : month});
+        // console.log(this.state)
+    }
+    updateSelectedTime(time) {
+        this.setState({selectedTime : time});
         console.log(this.state)
     }
     render() {
         var that = this;
 
-        function updateSelected(day) {
+        function updateSelectedDay(day) {
             that.updateDay(day);
+        }
+        function updateSelectedMonth(month) {
+            that.updateMonth(month);
+        }
+        function updateSelectedTime(time) {
+            that.updateSelectedTime(time);
         }
 
         // console.log(this.state);
@@ -31,7 +46,9 @@ export default class App extends React.Component {
             <div>
                 <ControlBox
                     data={ this.state }
-                    update={ updateSelected }
+                    updateSelectedDay={ updateSelectedDay }
+                    updateSelectedMonth={ updateSelectedMonth }
+                    updateSelectedTime={ updateSelectedTime }
                 />
                 <div>
                     <TileContainer
