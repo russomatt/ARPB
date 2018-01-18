@@ -1,13 +1,15 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 import Tile from './Tile.js';
+import DayTile from './DayTile.js';
 import { getSelectedYear } from '../utils/utils.js';
 import { getSelectedMonth } from '../utils/utils.js';
 import { getDisplayedDates } from '../utils/utils.js';
 import { getDisplayedColors } from '../utils/utils.js';
 import { splitDate } from '../utils/utils.js';
-import { displayFullDay } from '../utils/utils.js';
+import { displayFullDayData } from '../utils/utils.js';
 import { getSelectedDay } from '../utils/utils.js';
+import { displayFullDayNodes } from '../utils/utils.js';
 
 export default class TileContainer extends React.Component {
     constructor(props) {
@@ -20,6 +22,7 @@ export default class TileContainer extends React.Component {
                 selectedMonth: this.props.data.selectedMonth,
                 selectedYear: this.props.data.selectedYear,
                 selectedTime: this.props.data.selectedTime,
+                viewFullDay: this.props.data.viewFullDay,
             };
     }
     componentWillReceiveProps(nextProps) {
@@ -31,35 +34,27 @@ export default class TileContainer extends React.Component {
                 selectedMonth: nextProps.data.selectedMonth,
                 selectedYear: nextProps.data.selectedYear,
                 selectedTime: nextProps.data.selectedTime,
+                viewFullDay: nextProps.data.viewFullDay,
 
          });  
     }
     render() {
-        // console.log(this.state);
-        // var containerClasses = 'tile-container ';
-        // console.log(this.props.data.selectedDay)
 
         var containerClasses = 'tile-container ' + this.props.displayMode;
         var that = this;
         var days = that.state.data.data[0].data.months[0].data;
-        // console.log(this.state.test);
         var SelectedYearData = getSelectedYear(that.state.data.data, this.state.selectedYear);
         var SelectedMonthData = getSelectedMonth(SelectedYearData, this.state.selectedMonth);
         var displayData = getDisplayedDates(SelectedMonthData, this.props.displayMode, this.state.selectedDay, this.state.selectedMonth, this.state.selectedYear);
         var selectedDayData = getSelectedDay(days, this.state.selectedDay)
-        // var test = displayFullDay(selectedDayData);
-        // var date = splitDate(day.day);
 
-        var tileNodes = displayData.map(function(day,i) {
-            // console.log(day.times)
+        var tileNodes = !this.state.viewFullDay ? displayData.map(function(day,i) {
             var hasColors = true;
             var colorsAtTime = getDisplayedColors(day.times, that.state.selectedTime);
             if(colorsAtTime.length == 0) {
                 hasColors = false;
                 colorsAtTime = ['rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)'];
             }
-            // console.log(colorsAtTime)
-            // var colors = day.times[0].colors;
             var date = splitDate(day.day);
             var selectedTime = day.times[0].time;
 
@@ -72,9 +67,38 @@ export default class TileContainer extends React.Component {
                     year={ date.year }
                     selectedTime={ that.state.selectedTime }
                     hasColors={ hasColors }
+
                 />
             )
-        });
+            }) : ( 
+
+                displayData.map(function(day,i) {
+                    var hasColors = true;
+                    var colorsAtTime = getDisplayedColors(day.times, that.state.selectedTime);
+
+                    if(colorsAtTime.length == 0) {
+                        hasColors = false;
+                        colorsAtTime = ['rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)'];
+                    }
+
+                    var date = splitDate(day.day);
+                    var selectedTime = day.times[0].time;
+                    var fullDayData = displayFullDayData(day);
+                    var fullDayNodes = displayFullDayNodes(fullDayData);
+
+                    return (
+                        <DayTile
+                            key={ 'tile-' + i }
+                            day={ date.day }
+                            month={ date.month }
+                            year={ date.year }
+                        >
+                            { fullDayNodes }
+                        </DayTile>
+                    )
+                })
+
+        );
         return ( 
             <div className={ containerClasses }>
                 { tileNodes }

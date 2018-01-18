@@ -10,7 +10,6 @@ export default class ControlBox extends React.Component {
         this.state = this.props.data;
     }
     componentWillReceiveProps(nextProps) {
-        console.log(nextProps);
         this.setState({ 
                 data: nextProps.data.data,
                 displayMode: nextProps.displayMode,
@@ -18,13 +17,12 @@ export default class ControlBox extends React.Component {
                 selectedMonth: nextProps.data.selectedMonth,
                 selectedYear: nextProps.data.selectedYear,
                 selectedTime: nextProps.data.selectedTime,
+                viewFullDay: nextProps.data.viewFullDay,
             });  
     }
     render() {
-        // console.log(this.state.data);
         var SelectedYearData = getSelectedYear(this.state.data.data, this.state.selectedYear);
         var daysArr = getSelectedMonth(SelectedYearData, this.state.selectedMonth);
-        // console.log(SelectedYearData)
         var that = this;
 
         function onDayChange(event) {
@@ -102,27 +100,36 @@ export default class ControlBox extends React.Component {
                      '23:00', '23:10', '23:20', '23:30','23:40', '23:50'
                      ];
 
-
         var timeIdx = times.indexOf(this.state.selectedTime)
-        // var selectedSliderTime = times
         var that = this;
+
         function sliderFunction(event) {
             var newTimeIdx = event.target.value;
             var newSelectedTime = times[newTimeIdx];
             that.props.updateSelectedTime(newSelectedTime);
         }
 
+        function viewByDay(event) {
+            if(event.target.value == 'true') {
+                that.props.updateViewByDay(event.target.value);
+            } else {
+                that.props.updateViewByDay(event.target.value);
+            }
+        }
+
+        var lol = this.state.viewFullDay;
+
         var timeSlider = (
-                // var times = 
                 <div>
                     <input
                         onChange={ sliderFunction }
-                        className="time-slider"
+                        className={ that.viewFullDay ? "time-slider" : "time-slider disabled"}
                         type="range"
                         min="0"
                         value={ timeIdx }
                         max="143"
                         step="1"
+                        disabled={ this.state.viewFullDay }
                     />
                     <span>
                         { this.state.selectedTime }
@@ -130,6 +137,9 @@ export default class ControlBox extends React.Component {
                 </div>
             );
 
+        function onDisplayChange(event) {
+            that.props.updateDisplayMode(event.target.value);
+        }
 
         return (
             <div className="control-box">
@@ -148,6 +158,26 @@ export default class ControlBox extends React.Component {
                     <span>
                         2017
                     </span>
+                </div>
+                <div>
+                    View by:
+                    <select onChange={ onDisplayChange }>
+                        <option value="week" defaultValue>
+                            Week
+                        </option>
+                        <option value="day">
+                            Day
+                        </option>
+                    </select>
+                </div>
+                <div className="view-option">
+                    <button className={ this.state.viewFullDay ? "option" : "option selected" } onClick={ viewByDay } value={ 'false' }>
+                        View Point in Time
+                    </button>
+                    <button className={ this.state.viewFullDay ? "option selected" : "option" } onClick={ viewByDay } value={ 'true' }>
+                        View Full Day
+                    </button>
+                    <hr className={ this.state.viewFullDay ? "right" : "left" }/>
                 </div>
             </div>
             );

@@ -1,0 +1,5 @@
+[{"day": "dd.mm.yy", "times" : [
+	{"time": "hh:mm", "colors": ["four rgb values for first column",
+								"four rgb values for second column",
+								"four rgb values for second column",
+								"four rgb values for second column"]}]

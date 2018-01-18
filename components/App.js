@@ -2,7 +2,9 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import ControlBox from './ControlBox.js';
 import TileContainer from './TileContainer.js';
+import TimeHover from './TimeHover.js';
 import data from '../data/testData.json';
+// import img from '../img/sky4.jpeg';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -14,19 +16,27 @@ export default class App extends React.Component {
             selectedYear: '2016',
             displayMode: 'week',
             selectedTime: '00:00',
+            viewFullDay: false,
         };
     }
     updateDay(day) {
         this.setState({selectedDay : day});
-        // console.log(this.state)
     }
     updateMonth(month) {
         this.setState({selectedMonth : month});
-        // console.log(this.state)
     }
     updateSelectedTime(time) {
         this.setState({selectedTime : time});
-        console.log(this.state)
+    }
+    updateDisplayMode(display) {
+        this.setState({displayMode : display});
+    }
+    updateViewByDay(bool) {
+        if( bool == 'true') {
+            this.setState({viewFullDay : true});
+        } else {
+            this.setState({viewFullDay : false});
+        }
     }
     render() {
         var that = this;
@@ -40,8 +50,15 @@ export default class App extends React.Component {
         function updateSelectedTime(time) {
             that.updateSelectedTime(time);
         }
+        function updateDisplayMode(display) {
+            that.updateDisplayMode(display);
+        }
+        function updateViewByDay(bool) {
+            that.updateViewByDay(bool);
+        }
 
-        // console.log(this.state);
+        var timeHover = this.state.viewFullDay ? (<TimeHover/>) : "";
+
         return (
             <div>
                 <ControlBox
@@ -49,6 +66,8 @@ export default class App extends React.Component {
                     updateSelectedDay={ updateSelectedDay }
                     updateSelectedMonth={ updateSelectedMonth }
                     updateSelectedTime={ updateSelectedTime }
+                    updateDisplayMode={ updateDisplayMode }
+                    updateViewByDay={ updateViewByDay }
                 />
                 <div>
                     <TileContainer
@@ -56,6 +75,7 @@ export default class App extends React.Component {
                         displayMode={ this.state.displayMode }
                     />
                 </div>
+               { timeHover }
             </div>
         );
     }
