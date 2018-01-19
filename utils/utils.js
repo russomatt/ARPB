@@ -25,6 +25,20 @@ export var timeArray = ['00:00', '00:10', '00:20', '00:30','00:40', '00:50',
              '22:00', '22:10', '22:20', '22:30','22:40', '22:50',
              '23:00', '23:10', '23:20', '23:30','23:40', '23:50'
              ];
+
+var monthArr = [{'month': 'january','monthNum': '01','monthLen': 31},
+					{'month': 'february','monthNum': '02', 'monthLen': 28},
+					{'month': 'march','monthNum': '03', 'monthLen': 31},
+					{'month': 'april','monthNum': '04', 'monthLen': 30},
+					{'month': 'may','monthNum': '05', 'monthLen': 31},
+					{'month': 'june','monthNum': '06', 'monthLen': 30},
+					{'month': 'july','monthNum': '07', 'monthLen': 31},
+					{'month': 'august','monthNum': '08', 'monthLen': 31},
+					{'month': 'september','monthNum': '09', 'monthLen': 30},
+					{'month': 'october','monthNum': '10', 'monthLen': 31},
+					{'month': 'november','monthNum': '11', 'monthLen': 30},
+					{'month': 'december','monthNum': '12', 'monthLen': 31}
+					];
 // return correct data for the select year, takes in data as an array of year objects,
 // and the selected year
 export function getSelectedYear(data, year){
@@ -68,19 +82,6 @@ export function getDisplayedDates(data, displayMode, day, month, year){
 
 		var dataLen = data.length;
 		var monthNumber = -1;
-		var monthArr = [{'month': 'january','monthNum': '01'},
-							{'month': 'february','monthNum': '02'},
-							{'month': 'march','monthNum': '03'},
-							{'month': 'april','monthNum': '04'},
-							{'month': 'may','monthNum': '05'},
-							{'month': 'june','monthNum': '06'},
-							{'month': 'july','monthNum': '07'},
-							{'month': 'august','monthNum': '08'},
-							{'month': 'september','monthNum': '09'},
-							{'month': 'october','monthNum': '10'},
-							{'month': 'november','monthNum': '11'},
-							{'month': 'december','monthNum': '12'}
-							];
 
 		var monthObj = monthArr.find(function(singleMonth) {
 			if(singleMonth.month == month) {
@@ -105,30 +106,84 @@ export function getDisplayedDates(data, displayMode, day, month, year){
 
 		if( displayMode == 'week') {
 
-			if( selectedDateIdx + 7 <= dataLen ) {
+			if( selectedDateIdx + 7 <= dataLen > 7 ) {
 				var endIdx = selectedDateIdx + 7;
 				return  data.slice(selectedDateIdx, endIdx);
+					return data.slice(startIdx, endIdx);
 
-			} else if( selectedDateIdx + 7 > dataLen ) {
+			} else if( selectedDateIdx + 7 > dataLen && dataLen > 7 ) {
 				var diff = dataLen - (selectedDateIdx + 7);
 				var endIdx = 7 + diff;
 				endIdx = endIdx + selectedDateIdx;
 				var startIdx = selectedDateIdx + diff;
 
 				if (startIdx >= 0) {
+
 					return data.slice(startIdx, endIdx);
+
 				}
 
 			} else {
-				// TODO: WIll this case ever be reached?
-				throw 'figure out whats going on here';
+				console.log()
+				var diff = dataLen - (selectedDateIdx + 7);
+				var endIdx = 7 + diff;
+				endIdx = endIdx + selectedDateIdx;
+				var startIdx = selectedDateIdx + diff;
+
+
+				var dat = data.slice(startIdx, dataLen)
+				var em = getEmptyNodes(dat);
+
+				return dat;
+
+				// TODO: fix this case
 			};
 		} else if( displayMode == 'day') {
 				return [data[selectedDateIdx]];
+			// return 'hghghghghg3';
 		} else {
-			// return all data; 
-			return
+			// what is this case?; 
+			// return 'hghghghghg';
 		}
+
+		return'ugh';
+}
+
+export function getEmptyNodes(data) {
+	var dataLen = data.length;
+	var diff = 7 - dataLen;
+	// console.log(data)
+	// console.log(diff)
+	var lastDayIdx = data[dataLen - 1].day;
+	var dateObj = splitDate(lastDayIdx);
+	var lastDayNum = parseInt(lastDayIdx);
+
+	var monthLen = -1;
+	for(var i = 0; i < monthArr.length; i++) {
+		if(monthArr[i].monthNum == dateObj.month) {
+			monthLen = monthArr[i].monthLen;
+		}
+	}
+
+	for(var i = 0; i < diff; i++) {
+		if(diff + 7 > monthLen) {
+
+			data = data;
+		} else {
+			// var monthLen2 = 29;
+			// // var diff3 = 7 - 
+			// var diff2 = monthLen2 - (diff + 7);
+			// console.log(diff2);
+
+			// console.log(data);
+			var dateNum = lastDayNum + i;
+			var dayDate = dateNum < 10 ? '0' + dateNum : dateNum;
+			var day = dayDate + '.' + dateObj.month + '.' + dateObj.year;
+			var emptyObj = {'day': day, 'times': []};
+			data.push(emptyObj);
+		}
+
+	}
 
 }
 
@@ -148,12 +203,13 @@ export function displayFullDayData(day) {
 	var startIdx = 0;
 	var endIdx = dataLen - 1;
 
-	var startTime = day.times[startIdx].time
-	var endTime = day.times[endIdx].time
+	var startTime = day.times[startIdx].time;
+	var endTime = day.times[endIdx].time;
 
 	var startTimeIdx = timeArray.indexOf(startTime);
+
 	var endTimeIdx = timeArray.indexOf(endTime);
-	var diff =  (startTimeIdx - endTimeIdx) * -1;
+	var diff =  (endTimeIdx - startTimeIdx);
 	var timeLength = timeArray.length;
 
 	// make sure there are no gaps in the time
@@ -169,10 +225,29 @@ export function displayFullDayData(day) {
 		return [{ percent : startPercent, missingData : true},
 				{ percent : colorPercent, missingData : false, colors: colors },
 				{ percent : endPercent, missingData : true}];
+	} else if (dataLen != timeLength){
+
+
+		var ugh = findGaps(timeArray, day.times, startTimeIdx);
+		var colors = getCombinedColors(day.times);
+		var ugh2 = ugh[0] - 1;
+		// console.log(ugh);
+		// console.log(day.times);
+
+
+		for (var i = 0; i < ugh.length; i++) {
+			// console.log('---')
+			// console.log(day.times[ugh[i] - 33])
+
+			// console.log( timeArray[ugh[i]])
+			// console.log( timeArray[ugh[i+1]])
+			// console.log('---')
+
+		}
+		return [{ percent : '100%', missingData : false, colors: colors }]
 	} else {
 		// no gaps, return whole chunk'
 		var colors = getCombinedColors(day.times);
-
 		return [{ percent : '100%', missingData : false, colors: colors }]
 	}
 
@@ -279,3 +354,97 @@ export function getTimeFromPercent(percent){
 
 	return time;
 }
+
+export function format(data){
+	var ugh = []
+	var day;
+	var index = -1;
+	for(var i = 0; i < data.length; i++) {
+		var day2 = data[i].date[6] + '' + data[i].date[7];
+		var time = data[i].date[8] + '' + data[i].date[9] + ':' + data[i].date[10] + "" + data[i].date[11];
+		// console.log(time)
+		if(day2 != day) {
+			var dayObj = {'day' : day2, times: []};
+			day = day2;
+			index = index + 1;
+			var test2 = [];
+			for (var j = 0; j < data[i].rgb.length; j++) {
+
+				var arr = data[i].rgb[j];
+				var r = Math.floor(arr[0] * 255);
+				var g = Math.floor(arr[1] * 255);
+				var b = Math.floor(arr[2] * 255);
+				var color = 'rgb('+r+','+g+','+b+')';
+
+				test2.push(color);
+
+			}
+
+			var test3 = [];
+			for (var j = 0; j < 4; j++) {
+				var test4 =  test2[j] + ',' + test2[j+4] + ',' + test2[j+8] + ',' + test2[j+12];
+				test3.push(test4);
+			}
+
+			var timeObj = {'time': time, 'colors': test3}
+			dayObj.times.push(timeObj);
+			// console.log(ugh)
+			ugh.push(dayObj);
+
+		} else if (day2 == day) {
+			var test2 = [];
+			for (var j = 0; j < data[i].rgb.length; j++) {
+
+				var arr = data[i].rgb[j];
+				var r = Math.floor(arr[0] * 255);
+				var g = Math.floor(arr[1] * 255);
+				var b = Math.floor(arr[2] * 255);
+				var color = 'rgb('+r+','+g+','+b+')';
+
+
+				test2.push(color);
+
+			}
+
+			var test3 = [];
+			for (var j = 0; j < 4; j++) {
+				var test4 =  test2[j] + ',' + test2[j+4] + ',' + test2[j+8] + ',' + test2[j+12];
+				test3.push(test4);
+			}
+
+			var timeObj = {'time': time, 'colors': test3}
+			ugh[index].times.push(timeObj);
+
+		}
+	}
+
+	// console.log(ugh)
+}
+
+export function findGaps(timesArr, times, startIdx) {
+
+	var gapsArr = []
+	var foundGap = false;
+	var lastIdx = -1;
+
+	// console.log(times[startIdx].time)
+	for(var i = 0; i < times.length; i++) {
+		// console.log(times[i])
+		var idx = i + startIdx;
+		var ugh1 = lastIdx + startIdx;
+		// console.log(startIdx)
+		if(times[i].time != timesArr[idx] && !foundGap) {
+			gapsArr.push(idx);
+			foundGap = true;
+			lastIdx = idx;
+		} else if (times[i].time == timesArr[ugh1]) {
+			gapsArr.push(idx);
+			foundGap = false;
+		} else {
+
+		}
+	}
+	return gapsArr;
+}
+
+

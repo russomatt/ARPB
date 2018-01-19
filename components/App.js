@@ -3,20 +3,21 @@ import React from 'react';
 import ControlBox from './ControlBox.js';
 import TileContainer from './TileContainer.js';
 import TimeHover from './TimeHover.js';
-import data from '../data/testData.json';
-// import img from '../img/sky4.jpeg';
+import data from '../data/testData2.json';
+import data2 from '../data/wcs_complete.json';
+import { format } from '../utils/utils.js';
 
 export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             data: data,
-            selectedDay: '01',
-            selectedMonth: 'october',
-            selectedYear: '2016',
+            selectedDay: '15',
+            selectedMonth: 'january',
+            selectedYear: '2018',
             displayMode: 'week',
-            selectedTime: '00:00',
-            viewFullDay: false,
+            selectedTime: '05:30',
+            viewFullDay: true,
         };
     }
     updateDay(day) {
@@ -59,6 +60,7 @@ export default class App extends React.Component {
 
         var timeHover = this.state.viewFullDay ? (<TimeHover/>) : "";
 
+        format(data2);
         return (
             <div>
                 <ControlBox
