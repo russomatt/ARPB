@@ -48,7 +48,6 @@ export default class TileContainer extends React.Component {
         var displayData = getDisplayedDates(SelectedMonthData, this.props.displayMode, this.state.selectedDay, this.state.selectedMonth, this.state.selectedYear);
         var selectedDayData = getSelectedDay(days, this.state.selectedDay)
 
-        console.log(displayData)
         var tileNodes = !this.state.viewFullDay ? displayData.map(function(day,i) {
             var hasColors = true;
             var colorsAtTime = getDisplayedColors(day.times, that.state.selectedTime);
@@ -57,7 +56,6 @@ export default class TileContainer extends React.Component {
                 colorsAtTime = ['rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)','rgb(255, 0, 0),rgb(255, 0, 0)'];
             }
             var date = splitDate(day.day);
-            // var selectedTime = day.times[0].time;
             var selectedTime = that.state.selectedTime;
 
             return (
@@ -84,10 +82,19 @@ export default class TileContainer extends React.Component {
 
                     var date = splitDate(day.day);
 
-
                     if (day.times.length > 0) {
                         var fullDayData = displayFullDayData(day);
                         var fullDayNodes = displayFullDayNodes(fullDayData);
+                    } else {
+                        var fullDayNodes = (
+                            <span>
+                            <div className='no-data-screen'>
+                            </div>
+                            <div className='no-data'>
+                                <p>No Data</p>
+                            </div>
+                            </span>
+                        )
                     }
 
                     return (

@@ -80,6 +80,7 @@ export function getSelectedMonth(data, month){
 // the array of days in the month, and the selected day, month, and year
 export function getDisplayedDates(data, displayMode, day, month, year){
 
+		var rawData = data;
 		var dataLen = data.length;
 		var monthNumber = -1;
 
@@ -124,42 +125,37 @@ export function getDisplayedDates(data, displayMode, day, month, year){
 				}
 
 			} else {
-				console.log()
 				var diff = dataLen - (selectedDateIdx + 7);
 				var endIdx = 7 + diff;
 				endIdx = endIdx + selectedDateIdx;
 				var startIdx = selectedDateIdx + diff;
-
-
 				var dat = data.slice(startIdx, dataLen)
-				var em = getEmptyNodes(dat);
 
+				if(startIdx < 0) {
+					var dataWithEmpty = getEmptyNodes(data);
+					console.log(dataWithEmpty)
+					return dataWithEmpty;
+				}
 				return dat;
 
 				// TODO: fix this case
 			};
 		} else if( displayMode == 'day') {
-				return [data[selectedDateIdx]];
-			// return 'hghghghghg3';
-		} else {
-			// what is this case?; 
-			// return 'hghghghghg';
-		}
 
-		return'ugh';
+				return [data[selectedDateIdx]];
+		} 
 }
 
 export function getEmptyNodes(data) {
 	var dataLen = data.length;
 	var diff = 7 - dataLen;
-	// console.log(data)
-	// console.log(diff)
 	var lastDayIdx = data[dataLen - 1].day;
 	var dateObj = splitDate(lastDayIdx);
 	var lastDayNum = parseInt(lastDayIdx);
 
 	var monthLen = -1;
 	for(var i = 0; i < monthArr.length; i++) {
+
 		if(monthArr[i].monthNum == dateObj.month) {
 			monthLen = monthArr[i].monthLen;
 		}
@@ -170,20 +166,17 @@ export function getEmptyNodes(data) {
 
 			data = data;
 		} else {
-			// var monthLen2 = 29;
-			// // var diff3 = 7 - 
-			// var diff2 = monthLen2 - (diff + 7);
-			// console.log(diff2);
 
-			// console.log(data);
-			var dateNum = lastDayNum + i;
-			var dayDate = dateNum < 10 ? '0' + dateNum : dateNum;
+			lastDayNum = lastDayNum + 1;
+			var dayDate = lastDayNum < 10 ? '0' + lastDayNum : lastDayNum;
 			var day = dayDate + '.' + dateObj.month + '.' + dateObj.year;
 			var emptyObj = {'day': day, 'times': []};
+
 			data.push(emptyObj);
 		}
-
 	}
+
+	return data;
 
 }
 
@@ -202,12 +195,9 @@ export function displayFullDayData(day) {
 	var dataLen = day.times.length;
 	var startIdx = 0;
 	var endIdx = dataLen - 1;
-
 	var startTime = day.times[startIdx].time;
 	var endTime = day.times[endIdx].time;
-
 	var startTimeIdx = timeArray.indexOf(startTime);
-
 	var endTimeIdx = timeArray.indexOf(endTime);
 	var diff =  (endTimeIdx - startTimeIdx);
 	var timeLength = timeArray.length;
@@ -217,54 +207,75 @@ export function displayFullDayData(day) {
 		var startChunk = startTimeIdx / timeLength;
 		var endChunk = (144 - endTimeIdx) / timeLength;
 		var colorChunk =  100 - ((startChunk + endChunk)*100);
-		var startPercent = (startChunk * 100)+ '%';
-		var endPercent = (endChunk * 100) + '%';
-		var colorPercent = colorChunk + '%';
+		var startPercent = (startChunk * 100);
+		var endPercent = (endChunk * 100);
+		var colorPercent = colorChunk;
 		var colors = getCombinedColors(day.times);
 
 		return [{ percent : startPercent, missingData : true},
 				{ percent : colorPercent, missingData : false, colors: colors },
 				{ percent : endPercent, missingData : true}];
-	} else if (dataLen != timeLength){
 
+	} else if (endIdx != diff){
 
-		var ugh = findGaps(timeArray, day.times, startTimeIdx);
+		var gapsArr = findGaps(day.times);
 		var colors = getCombinedColors(day.times);
-		var ugh2 = ugh[0] - 1;
-		// console.log(ugh);
-		// console.log(day.times);
+		var dataArr = [];
+		var times = day.times;
+		var idx = startTimeIdx;
+		var startChunk = startTimeIdx / timeLength;
+		var startPercent = (startChunk * 100);
 
+		dataArr.push({ percent : startPercent, missingData : true})
 
-		for (var i = 0; i < ugh.length; i++) {
-			// console.log('---')
-			// console.log(day.times[ugh[i] - 33])
+		for (var i = 0; i < gapsArr.length; i++) {
 
-			// console.log( timeArray[ugh[i]])
-			// console.log( timeArray[ugh[i+1]])
-			// console.log('---')
+			var start = i == 0 ? startTimeIdx/timeLength : gapsArr[i].time1/timeLength;
+			start = (start * 100) + '';
 
+			var end = gapsArr[i].time2/timeLength;
+			var size = ((gapsArr[i].time2 - gapsArr[i].time1)/timeLength) * 100;
+			var slice = times.slice(idx, gapsArr[i].time1);
+			var size2 = (gapsArr[i].time1 - idx) + '%';
+			var size3 = ((gapsArr[i].time1 - idx )/ timeLength) * 100;
+			var size4 = ((gapsArr[i].time2 - gapsArr[i].time1) / timeLength) * 100;
+			var colors = getCombinedColors(slice);
+
+			dataArr.push({ percent : size3, missingData : false, colors: colors })
+			dataArr.push({ percent : size4, missingData : true })
+			idx = gapsArr[i].time2;
 		}
-		return [{ percent : '100%', missingData : false, colors: colors }]
+
+		if (gapsArr[gapsArr.length - 1].endTime != timeArray[timeLength-1]) {
+			var lastTime = gapsArr[gapsArr.length - 1].gapEndTime;
+			var lastTimeIdx = timeArray.indexOf(lastTime);
+			var diff = timeLength - lastTimeIdx;
+			var size = (diff/timeLength) * 100;
+			dataArr.push({ percent : size, missingData : true })
+		}
+
+		return dataArr;
+
 	} else {
 		// no gaps, return whole chunk'
 		var colors = getCombinedColors(day.times);
 		return [{ percent : '100%', missingData : false, colors: colors }]
 	}
 
-	// TODO: add case for tiles with gaps within the chunks
 }
 
 export function displayFullDayNodes(fullDayData) {
 	var prevPercent = 0;
 	var chunkLen = fullDayData.length - 1;
+
 	var nodes = fullDayData.map(function(chunk, i) {
 			if(chunk.missingData) {
 				var styles = chunkLen == i ? 
 								{bottom: 0,
-								height: chunk.percent} :
-								{top: prevPercent,
-								height: chunk.percent};
-				prevPercent = chunk.percent;
+								height: chunk.percent + '%'} :
+								{top: prevPercent + '%',
+								height: chunk.percent + '%'};
+				prevPercent = prevPercent + chunk.percent;
 
                 return (
                     <div className="tile-chunk empty-chunk" key={'key-' + i} style={ styles }>
@@ -273,10 +284,11 @@ export function displayFullDayNodes(fullDayData) {
 			} else {
 				var styles = chunkLen == i ? 
 								{bottom: 0,
-								height: chunk.percent} :
-								{top: prevPercent,
-								height: chunk.percent};
-				prevPercent = chunk.percent;
+								height: chunk.percent + '%'} :
+								{top: prevPercent + '%',
+								height: chunk.percent + '%'};
+
+				prevPercent = prevPercent + chunk.percent;
 
 				var gradient1 = 'linear-gradient('+chunk.colors[0]+')';
 				var gradient2 = 'linear-gradient('+chunk.colors[1]+')';
@@ -356,18 +368,18 @@ export function getTimeFromPercent(percent){
 }
 
 export function format(data){
-	var ugh = []
+	var objArr = []
 	var day;
 	var index = -1;
 	for(var i = 0; i < data.length; i++) {
 		var day2 = data[i].date[6] + '' + data[i].date[7];
 		var time = data[i].date[8] + '' + data[i].date[9] + ':' + data[i].date[10] + "" + data[i].date[11];
-		// console.log(time)
+
 		if(day2 != day) {
 			var dayObj = {'day' : day2, times: []};
 			day = day2;
 			index = index + 1;
-			var test2 = [];
+			var colorArr = [];
 			for (var j = 0; j < data[i].rgb.length; j++) {
 
 				var arr = data[i].rgb[j];
@@ -376,23 +388,22 @@ export function format(data){
 				var b = Math.floor(arr[2] * 255);
 				var color = 'rgb('+r+','+g+','+b+')';
 
-				test2.push(color);
+				colorArr.push(color);
 
 			}
 
-			var test3 = [];
+			var colorArr2 = [];
 			for (var j = 0; j < 4; j++) {
-				var test4 =  test2[j] + ',' + test2[j+4] + ',' + test2[j+8] + ',' + test2[j+12];
-				test3.push(test4);
+				var newColor =  colorArr[j] + ',' + colorArr[j+4] + ',' + colorArr[j+8] + ',' + colorArr[j+12];
+				colorArr2.push(newColor);
 			}
 
-			var timeObj = {'time': time, 'colors': test3}
+			var timeObj = {'time': time, 'colors': colorArr2}
 			dayObj.times.push(timeObj);
-			// console.log(ugh)
-			ugh.push(dayObj);
+			objArr.push(dayObj);
 
 		} else if (day2 == day) {
-			var test2 = [];
+			var colorArr = [];
 			for (var j = 0; j < data[i].rgb.length; j++) {
 
 				var arr = data[i].rgb[j];
@@ -402,49 +413,69 @@ export function format(data){
 				var color = 'rgb('+r+','+g+','+b+')';
 
 
-				test2.push(color);
+				colorArr.push(color);
 
 			}
 
-			var test3 = [];
+			var colorArr2 = [];
 			for (var j = 0; j < 4; j++) {
-				var test4 =  test2[j] + ',' + test2[j+4] + ',' + test2[j+8] + ',' + test2[j+12];
-				test3.push(test4);
+				var newColor =  colorArr[j] + ',' + colorArr[j+4] + ',' + colorArr[j+8] + ',' + colorArr[j+12];
+				colorArr2.push(newColor);
 			}
 
-			var timeObj = {'time': time, 'colors': test3}
-			ugh[index].times.push(timeObj);
+			var timeObj = {'time': time, 'colors': colorArr2}
+			objArr[index].times.push(timeObj);
 
 		}
 	}
-
-	// console.log(ugh)
 }
 
-export function findGaps(timesArr, times, startIdx) {
+export function findGaps(times) {
 
 	var gapsArr = []
 	var foundGap = false;
 	var lastIdx = -1;
+	var idxOffset = timeArray.indexOf(times[0].time)
+	var inGap = false;
+	var gapStartIdx = -1;
+	var gapCount = -1;
 
-	// console.log(times[startIdx].time)
 	for(var i = 0; i < times.length; i++) {
-		// console.log(times[i])
-		var idx = i + startIdx;
-		var ugh1 = lastIdx + startIdx;
-		// console.log(startIdx)
-		if(times[i].time != timesArr[idx] && !foundGap) {
-			gapsArr.push(idx);
-			foundGap = true;
-			lastIdx = idx;
-		} else if (times[i].time == timesArr[ugh1]) {
-			gapsArr.push(idx);
-			foundGap = false;
-		} else {
+		var offsetI = idxOffset;
+
+		if(times[i].time != timeArray[offsetI] && !inGap) {
+			var idx = i - 1;
+			var idx2 = offsetI - 1;
+			var gapObject = 
+				{'gapStart' : idx,
+				 'gapEnd' : '',
+				 'gapStartTime' : times[idx].time,
+				 'gapEndTime' : '',
+				 'time1' : idx2, 
+				 'time2' : '',
+				 'time3' : timeArray[idx2],
+				 'time4' : ''
+				};
+
+			gapsArr.push(gapObject);
+			gapStartIdx = i;
+			gapCount = gapCount + 1;
+			inGap = true;
+
+		} else if (times[gapStartIdx] != undefined && times[gapStartIdx].time == timeArray[offsetI] && inGap) {
+
+			gapsArr[gapCount].gapEnd = gapStartIdx;
+			gapsArr[gapCount].gapEndTime = times[gapStartIdx].time;
+			gapsArr[gapCount].time2 = offsetI;
+			gapsArr[gapCount].time4 = timeArray[offsetI];
+			inGap = false;
+			i = gapStartIdx;
 
 		}
+
+		idxOffset = idxOffset + 1;
 	}
+
 	return gapsArr;
 }
-
 

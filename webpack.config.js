@@ -9,6 +9,10 @@ const loaders = {
           presets: ["env", "react"]
         }
     },
+    fileLoader: {
+        test: /\.(eot|svg|ttf|woff|woff2|jpg|png)$/,
+        loader: 'file-loader?name=[path][name].[hash].[ext]',
+    },
     scssLoader: {
         test: /\.scss$/,
         exclude: /node_modules/,
@@ -33,6 +37,7 @@ const app = {
     module: {
         loaders: [
             loaders.jsxLoader,
+            loaders.fileLoader,
             loaders.scssLoader,
             loaders.cssLoader,
             loaders.jsonLoader,

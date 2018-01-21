@@ -3,7 +3,7 @@ import React from 'react';
 import ControlBox from './ControlBox.js';
 import TileContainer from './TileContainer.js';
 import TimeHover from './TimeHover.js';
-import data from '../data/testData2.json';
+import data from '../data/data.json';
 import data2 from '../data/wcs_complete.json';
 import { format } from '../utils/utils.js';
 

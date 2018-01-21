@@ -53,8 +53,10 @@ export default class Tile extends React.Component {
                         { this.props.selectedTime}
                     </div>
                 </div>
+                <div className={this.props.hasColors ? 'hidden' : 'no-data-screen'}>
+                </div>
                 <div className={this.props.hasColors ? 'hidden' : 'no-data'}>
-                    No Data
+                    <p>No Data</p>
                 </div>
                 { gradientNodes }
             </div>

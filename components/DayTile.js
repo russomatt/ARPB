@@ -13,7 +13,7 @@ export default class DayTile extends React.Component {
 
     render() {
         return (
-            <div className="tile">
+            <div className={'tile ' + this.props.day}>
                 <div className="date-time-container">
                     <div className="date">
                         <span>

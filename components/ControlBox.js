@@ -8,6 +8,7 @@ export default class ControlBox extends React.Component {
     constructor(props) {
         super(props);
         this.state = this.props.data;
+        this.state.minimize = false;
     }
     componentWillReceiveProps(nextProps) {
         this.setState({ 
@@ -18,6 +19,7 @@ export default class ControlBox extends React.Component {
                 selectedYear: nextProps.data.selectedYear,
                 selectedTime: nextProps.data.selectedTime,
                 viewFullDay: nextProps.data.viewFullDay,
+                minimize: this.state.minimize
             });  
     }
     render() {
@@ -30,6 +32,10 @@ export default class ControlBox extends React.Component {
         }
         function onMonthChange(event) {
             that.props.updateSelectedMonth(event.target.value);
+        }
+
+        function click() {
+            that.setState({minimize: !that.state.minimize});
         }
 
         var selectDayNode = (<select onChange={ onDayChange }> {
@@ -120,20 +126,17 @@ export default class ControlBox extends React.Component {
         var lol = this.state.viewFullDay;
 
         var timeSlider = (
-                <div>
+                <div className="slider">
                     <input
                         onChange={ sliderFunction }
-                        className={ that.viewFullDay ? "time-slider" : "time-slider disabled"}
+                        className="time-slider"
                         type="range"
                         min="0"
                         value={ timeIdx }
                         max="143"
                         step="1"
-                        disabled={ this.state.viewFullDay }
                     />
-                    <span>
-                        { this.state.selectedTime }
-                    </span>
+                    <hr/>
                 </div>
             );
 
@@ -142,42 +145,67 @@ export default class ControlBox extends React.Component {
         }
 
         return (
-            <div className="control-box">
-                <div className="title">
-                    <h1>
-                        Time As Color
-                    </h1>
-                    <h2>
-                        visualization of the sky
-                    </h2>
-                </div>
-                <div className="slider">
-                    { timeSlider }
-                    { selectDayNode }
-                    { selectMonthNode }
+            <div className={ this.state.minimize ? 'control-box minimized' : 'control-box' }>
+                <h1 className="min-button" onClick={ click }>
                     <span>
-                        2017
+                        +
                     </span>
-                </div>
-                <div>
-                    View by:
-                    <select onChange={ onDisplayChange }>
-                        <option value="week" defaultValue>
-                            Week
-                        </option>
-                        <option value="day">
-                            Day
-                        </option>
-                    </select>
-                </div>
-                <div className="view-option">
-                    <button className={ this.state.viewFullDay ? "option" : "option selected" } onClick={ viewByDay } value={ 'false' }>
-                        View Point in Time
-                    </button>
-                    <button className={ this.state.viewFullDay ? "option selected" : "option" } onClick={ viewByDay } value={ 'true' }>
-                        View Full Day
-                    </button>
-                    <hr className={ this.state.viewFullDay ? "right" : "left" }/>
+                </h1>
+                <div className="controls">
+                    <div className="title">
+                        <h1>
+                            Time As Color
+                        </h1>
+                        <h2>
+                            visualization of the sky
+                        </h2>
+                    </div>
+                    <div className="view-option">
+                        <button className={ this.state.viewFullDay ? "option" : "option selected" } onClick={ viewByDay } value={ 'false' }>
+                            View Point in Time
+                        </button>
+                        <button className={ this.state.viewFullDay ? "option selected" : "option" } onClick={ viewByDay } value={ 'true' }>
+                            View Full Day
+                        </button>
+                        <hr className={ this.state.viewFullDay ? "right" : "left" }/>
+                    </div>
+                    <div className="selects">
+                        <div className="select-holder select-day">
+                            <span>
+                                Date:
+                            </span>
+                            { selectDayNode }
+                        </div>
+                        <div className="select-holder select-month">
+                            { selectMonthNode }
+                        </div>
+                        <span>
+                            2017
+                        </span>
+                        <br/>
+                        <div className="select-holder select-display">
+                            <span>
+                                Display by:
+                            </span>
+                            <select onChange={ onDisplayChange }>
+                                <option value="week" defaultValue>
+                                    Week
+                                </option>
+                                <option value="day">
+                                    Day
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="time-slider">
+                        { !this.state.viewFullDay && timeSlider }
+                        { !this.state.viewFullDay && 
+                            <span className="display-time">
+                                { this.state.selectedTime }
+                            </span>
+
+                        }
+                    </div>
                 </div>
             </div>
             );

@@ -23,6 +23,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.7",
+    "file-loader": "^1.1.6",
     "json-loader": "^0.5.7",
     "jsx-loader": "^0.13.2",
     "node-sass": "^4.7.2",
