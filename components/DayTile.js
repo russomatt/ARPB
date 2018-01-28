@@ -10,26 +10,33 @@ export default class DayTile extends React.Component {
                     year :  this.props.year,
         };
     }
+    componentWillReceiveProps(nextProps) {
+        this.setState({ 
+                day :  nextProps.day,
+                month :  nextProps.month,
+                year :  nextProps.year,
+            });  
+    }
 
     render() {
         return (
-            <div className={'tile ' + this.props.day}>
+            <div className={'tile ' + this.state.day}>
                 <div className="date-time-container">
                     <div className="date">
                         <span>
-                            { this.props.day}
+                            { this.state.day}
                         </span>
                         <span className="divider">
                             .
                         </span>
                         <span>
-                            { this.props.month}
+                            { this.state.month}
                         </span>
                         <span className="divider">
                             .
                         </span>
                         <span>
-                            { this.props.year}
+                            { this.state.year}
                         </span>
                     </div>
                 </div>

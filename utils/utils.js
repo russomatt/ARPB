@@ -44,6 +44,7 @@ var monthArr = [{'month': 'january','monthNum': '01','monthLen': 31},
 export function getSelectedYear(data, year){
 
 	// find index of year
+
 	for (var i = 0; i < data.length; i++) {
 
 		if (data[i].year == year) {
@@ -107,7 +108,7 @@ export function getDisplayedDates(data, displayMode, day, month, year){
 
 		if( displayMode == 'week') {
 
-			if( selectedDateIdx + 7 <= dataLen > 7 ) {
+			if( selectedDateIdx + 7 <= dataLen ) {
 				var endIdx = selectedDateIdx + 7;
 				return  data.slice(selectedDateIdx, endIdx);
 					return data.slice(startIdx, endIdx);
@@ -133,7 +134,6 @@ export function getDisplayedDates(data, displayMode, day, month, year){
 
 				if(startIdx < 0) {
 					var dataWithEmpty = getEmptyNodes(data);
-					console.log(dataWithEmpty)
 					return dataWithEmpty;
 				}
 				return dat;
@@ -191,7 +191,6 @@ export function getDisplayedColors(data, time){
 }
 
 export function displayFullDayData(day) {
-
 	var dataLen = day.times.length;
 	var startIdx = 0;
 	var endIdx = dataLen - 1;
@@ -202,7 +201,6 @@ export function displayFullDayData(day) {
 	var diff =  (endTimeIdx - startTimeIdx);
 	var timeLength = timeArray.length;
 
-	// make sure there are no gaps in the time
 	if(endIdx == diff) {
 		var startChunk = startTimeIdx / timeLength;
 		var endChunk = (144 - endTimeIdx) / timeLength;
@@ -241,17 +239,39 @@ export function displayFullDayData(day) {
 			var size4 = ((gapsArr[i].time2 - gapsArr[i].time1) / timeLength) * 100;
 			var colors = getCombinedColors(slice);
 
+			
+			if (colors.length == 0) {
+
+				
+				var sliceIdx1 = gapsArr[i].gapEnd
+				slice = times.slice(sliceIdx1, idx);
+				colors = getCombinedColors(slice);
+
+			}
+
+
 			dataArr.push({ percent : size3, missingData : false, colors: colors })
 			dataArr.push({ percent : size4, missingData : true })
+			
 			idx = gapsArr[i].time2;
+
 		}
 
-		if (gapsArr[gapsArr.length - 1].endTime != timeArray[timeLength-1]) {
+		if (gapsArr[gapsArr.length - 1].gapEndTime != timeArray[timeLength-1]) {
+
 			var lastTime = gapsArr[gapsArr.length - 1].gapEndTime;
 			var lastTimeIdx = timeArray.indexOf(lastTime);
 			var diff = timeLength - lastTimeIdx;
 			var size = (diff/timeLength) * 100;
-			dataArr.push({ percent : size, missingData : true })
+			var sliceIdx1 = gapsArr[gapsArr.length - 1].gapEnd
+			var sliceIdx2 = (times.length - 1)
+			var slice = times.slice(sliceIdx1, sliceIdx2);
+
+			var colors = getCombinedColors(slice);
+
+			dataArr.push({ percent : size, missingData : false, colors: colors })
+
+			// dataArr.push({ percent : size, missingData : true })
 		}
 
 		return dataArr;
@@ -372,8 +392,13 @@ export function format(data){
 	var day;
 	var index = -1;
 	for(var i = 0; i < data.length; i++) {
+		201712211630
+
 		var day2 = data[i].date[6] + '' + data[i].date[7];
+		var month = data[i].date[4] + '' + data[i].date[5];
+		var year = data[i].date[0] + '' + data[i].date[1] + '' + data[i].date[2] + '' + data[i].date[3];
 		var time = data[i].date[8] + '' + data[i].date[9] + ':' + data[i].date[10] + "" + data[i].date[11];
+		day2 = day2 + '.' + month + '.' + year
 
 		if(day2 != day) {
 			var dayObj = {'day' : day2, times: []};
@@ -428,6 +453,7 @@ export function format(data){
 
 		}
 	}
+	return objArr;
 }
 
 export function findGaps(times) {
@@ -439,13 +465,14 @@ export function findGaps(times) {
 	var inGap = false;
 	var gapStartIdx = -1;
 	var gapCount = -1;
+	var ugh = -1;
 
 	for(var i = 0; i < times.length; i++) {
 		var offsetI = idxOffset;
-
 		if(times[i].time != timeArray[offsetI] && !inGap) {
 			var idx = i - 1;
 			var idx2 = offsetI - 1;
+			ugh = times[idx].time;
 			var gapObject = 
 				{'gapStart' : idx,
 				 'gapEnd' : '',
@@ -462,7 +489,7 @@ export function findGaps(times) {
 			gapCount = gapCount + 1;
 			inGap = true;
 
-		} else if (times[gapStartIdx] != undefined && times[gapStartIdx].time == timeArray[offsetI] && inGap) {
+		} else if (times[gapStartIdx] != undefined && times[gapStartIdx].time == timeArray[idxOffset] && inGap) {
 
 			gapsArr[gapCount].gapEnd = gapStartIdx;
 			gapsArr[gapCount].gapEndTime = times[gapStartIdx].time;
@@ -471,6 +498,8 @@ export function findGaps(times) {
 			inGap = false;
 			i = gapStartIdx;
 
+		} else if (i == (times.length - 1) && inGap) {
+			i = i - (times.length - 1);
 		}
 
 		idxOffset = idxOffset + 1;
@@ -479,3 +508,17 @@ export function findGaps(times) {
 	return gapsArr;
 }
 
+export function format2(data) {
+	var arr = [];
+
+	for (var i = 0; i < data.length; i++) {
+
+		if(data[i].date == '201801092040') {
+
+			var dat1 = data.slice(0, i - 1);
+			var dat2 = data.slice(i, data.length - 1);
+
+			return [{'data' : dat1}, {'data' : dat2}];
+		}
+	}
+}

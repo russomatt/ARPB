@@ -44,12 +44,19 @@ body {
             margin-top: 0.5em;
             margin-bottom: 1em;
 
+            select {
+                cursor: pointer;
+            }
+
             &.select-day {
                 width: 20%;
             }
             &.select-month {
                 width: 55%;
-                text-transform: capitalize;
+
+                select {
+                    text-transform: capitalize;
+                }
             }
             span {
                 font-size: .7em;
@@ -86,6 +93,7 @@ body {
         top: 0;
         right: 0;
         transition: 0.4s;
+        cursor: pointer;
 
         span {
             transition: .6s;

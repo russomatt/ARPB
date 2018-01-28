@@ -157,7 +157,7 @@ export default class ControlBox extends React.Component {
                             Time As Color
                         </h1>
                         <h2>
-                            visualization of the sky
+                            Visualization of the sky
                         </h2>
                     </div>
                     <div className="view-option">

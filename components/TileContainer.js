@@ -14,7 +14,6 @@ import { displayFullDayNodes } from '../utils/utils.js';
 export default class TileContainer extends React.Component {
     constructor(props) {
         super(props);
-        // this.state = this.props.state;
         this.state = {
                 data: this.props.data.data,
                 displayMode: this.props.displayMode,
@@ -26,7 +25,6 @@ export default class TileContainer extends React.Component {
             };
     }
     componentWillReceiveProps(nextProps) {
-        // console.log(nextProps);
         this.setState({ 
                 data: nextProps.data.data,
                 displayMode: nextProps.displayMode,

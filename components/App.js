@@ -3,16 +3,19 @@ import React from 'react';
 import ControlBox from './ControlBox.js';
 import TileContainer from './TileContainer.js';
 import TimeHover from './TimeHover.js';
-import data from '../data/data.json';
+// import data from '../data/data.json';
+import data from '../data/data3.json';
 import data2 from '../data/wcs_complete.json';
+import data3 from '../data/wcs_complete_new.json';
 import { format } from '../utils/utils.js';
+import { format2 } from '../utils/utils.js';
 
 export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             data: data,
-            selectedDay: '15',
+            selectedDay: '09',
             selectedMonth: 'january',
             selectedYear: '2018',
             displayMode: 'week',
@@ -60,7 +63,6 @@ export default class App extends React.Component {
 
         var timeHover = this.state.viewFullDay ? (<TimeHover/>) : "";
 
-        format(data2);
         return (
             <div>
                 <ControlBox
