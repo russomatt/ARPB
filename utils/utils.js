@@ -108,42 +108,80 @@ export function getDisplayedDates(data, displayMode, day, month, year){
 
 		if( displayMode == 'week') {
 
-			if( selectedDateIdx + 7 <= dataLen ) {
-				var endIdx = selectedDateIdx + 7;
-				return  data.slice(selectedDateIdx, endIdx);
-					return data.slice(startIdx, endIdx);
+			var dayNum = parseFloat(day);
+			var monthObj = getMonthObj(month)
+			var endDate = dayNum > (monthObj.monthLen - 6) ? dayNum - 6 : dayNum + 6;
+			var dateArr = endDate > dayNum ? [dayNum, endDate] : [endDate, dayNum];
+			var arr = getArrOfDates(dateArr, monthObj.monthNum, year)
+			var datArr = getDataFromArr(data, arr);
 
-			} else if( selectedDateIdx + 7 > dataLen && dataLen > 7 ) {
-				var diff = dataLen - (selectedDateIdx + 7);
-				var endIdx = 7 + diff;
-				endIdx = endIdx + selectedDateIdx;
-				var startIdx = selectedDateIdx + diff;
+			return datArr;
 
-				if (startIdx >= 0) {
-
-					return data.slice(startIdx, endIdx);
-
-				}
-
-			} else {
-				var diff = dataLen - (selectedDateIdx + 7);
-				var endIdx = 7 + diff;
-				endIdx = endIdx + selectedDateIdx;
-				var startIdx = selectedDateIdx + diff;
-				var dat = data.slice(startIdx, dataLen)
-
-				if(startIdx < 0) {
-					var dataWithEmpty = getEmptyNodes(data);
-					return dataWithEmpty;
-				}
-				return dat;
-
-				// TODO: fix this case
-			};
 		} else if( displayMode == 'day') {
 
-				return [data[selectedDateIdx]];
+			var dayNum = parseFloat(day);
+			var dateArr = [dayNum, dayNum];
+			var arr = getArrOfDates(dateArr, monthObj.monthNum, year)
+			var datArr = getDataFromArr(data, arr);
+
+			return datArr;
+
+		} else if( displayMode == 'month') {
+
+			var dateArr = [1, monthObj.monthLen];
+			var arr = getArrOfDates(dateArr, monthObj.monthNum, year)
+			var datArr = getDataFromArr(data, arr);
+
+			return datArr;
 		} 
+}
+export function getMonthObj(month) {
+
+	var monthObj = -1;
+
+	for(var i = 0; i < monthArr.length; i++) {
+
+		if(monthArr[i].month == month) {
+
+			monthObj = monthArr[i];
+		}
+	}
+	return monthObj;
+}
+
+export function getArrOfDates(dateArr, month, year) {
+	var startDate = dateArr[0];
+	var endDate = dateArr[1];
+	var i = startDate;
+	var arrayOfDates = []
+	while( i <= endDate ) {
+    	var day = i > 9 ? "" + i : "0"  + i;
+    	var date = day + "." + month + "." + year
+    	arrayOfDates.push(date)
+    	i = i + 1;
+	}
+	return arrayOfDates;
+}
+export function getDataFromArr(data, arrayOfDates) {
+	var newData = []
+
+	for(var i = 0; i < arrayOfDates.length; i++) {
+
+		var obj = {'day': arrayOfDates[i], 'times': []};
+
+		for (var j = 0; j < data.length; j++) {
+
+			if(data[j].day == arrayOfDates[i]) {
+				obj = data[j];
+			}
+
+		}
+
+		newData.push(obj)
+	}
+
+	return newData;
+
 }
 
 export function getEmptyNodes(data) {
@@ -521,4 +559,16 @@ export function format2(data) {
 			return [{'data' : dat1}, {'data' : dat2}];
 		}
 	}
+}
+
+export function getDaySeq(num) {
+    var arr = []
+
+        for(var i = 0; i < num; i++) {
+
+            var val = i + 1;
+            arr.push(val)
+        }
+
+    return arr;
 }

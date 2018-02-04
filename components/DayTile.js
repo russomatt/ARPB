@@ -23,19 +23,19 @@ export default class DayTile extends React.Component {
             <div className={'tile ' + this.state.day}>
                 <div className="date-time-container">
                     <div className="date">
-                        <span>
+                        <span className="date-day">
                             { this.state.day}
                         </span>
                         <span className="divider">
                             .
                         </span>
-                        <span>
+                        <span className="date-month">
                             { this.state.month}
                         </span>
                         <span className="divider">
                             .
                         </span>
-                        <span>
+                        <span className="date-year">
                             { this.state.year}
                         </span>
                     </div>

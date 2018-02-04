@@ -3,6 +3,8 @@ import React from 'react';
 import { getSelectedYear } from '../utils/utils.js';
 import { getSelectedMonth } from '../utils/utils.js';
 import { splitDate } from '../utils/utils.js';
+import { getMonthObj } from '../utils/utils.js';
+import { getDaySeq } from '../utils/utils.js';
 
 export default class ControlBox extends React.Component {
     constructor(props) {
@@ -38,20 +40,26 @@ export default class ControlBox extends React.Component {
             that.setState({minimize: !that.state.minimize});
         }
 
+        var monthObj = getMonthObj(this.state.selectedMonth);
+
+        var daySeq = getDaySeq(monthObj.monthLen);
+
         var selectDayNode = (<select onChange={ onDayChange }> {
 
-                            daysArr.map(function(day) {
-                                var dateObj = splitDate(day.day);
-                                if(day == that.state.selectedDay) {
+
+                            daySeq.map(function(day, i) {
+                                var newDay = daySeq[i] > 9 ? "" + daySeq[i] : "0" + daySeq[i];
+                                if(newDay == that.state.selectedDay) {
+                                    // console.log(newDay)
                                     return (
-                                        <option key={'select-' + dateObj.day }value={ dateObj.day } selected>
-                                            { dateObj.day }
+                                        <option key={'select-' + newDay } value={ newDay } selected>
+                                            { newDay }
                                         </option>
                                     )
                                 } else {
                                     return (
-                                        <option key={'select-' + dateObj.day }value={ dateObj.day }>
-                                            { dateObj.day }
+                                        <option key={'select-' + newDay }value={ newDay }>
+                                            { newDay }
                                         </option>
                                     )
                                 }
@@ -180,7 +188,7 @@ export default class ControlBox extends React.Component {
                             { selectMonthNode }
                         </div>
                         <span>
-                            2017
+                            2018
                         </span>
                         <br/>
                         <div className="select-holder select-display">
@@ -193,6 +201,9 @@ export default class ControlBox extends React.Component {
                                 </option>
                                 <option value="day">
                                     Day
+                                </option>
+                                <option value="month">
+                                    Month
                                 </option>
                             </select>
                         </div>

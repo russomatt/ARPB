@@ -33,19 +33,19 @@ export default class Tile extends React.Component {
             <div className="tile">
                 <div className="date-time-container">
                     <div className="date">
-                        <span>
+                        <span className="date-day">
                             { this.props.day}
                         </span>
                         <span className="divider">
                             .
                         </span>
-                        <span>
+                        <span className="date-month">
                             { this.props.month}
                         </span>
                         <span className="divider">
                             .
                         </span>
-                        <span>
+                        <span className="date-year">
                             { this.props.year}
                         </span>
                     </div>

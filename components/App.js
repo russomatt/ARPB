@@ -3,6 +3,9 @@ import React from 'react';
 import ControlBox from './ControlBox.js';
 import TileContainer from './TileContainer.js';
 import TimeHover from './TimeHover.js';
+import BackArrow from './BackArrow.js';
+import NextArrow from './NextArrow.js';
+
 // import data from '../data/data.json';
 import data from '../data/data3.json';
 import data2 from '../data/wcs_complete.json';
@@ -80,6 +83,22 @@ export default class App extends React.Component {
                     />
                 </div>
                { timeHover }
+                <BackArrow 
+                    selectedDay={ this.state.selectedDay }
+                    selectedMonth={ this.state.selectedMonth }
+                    selectedYear={ this.state.selectedYear }
+                    displayMode={ this.state.displayMode }
+                    data={ this.state.data }
+                    onArrowClick={ updateSelectedDay }
+                />
+                <NextArrow 
+                    selectedDay={ this.state.selectedDay }
+                    selectedMonth={ this.state.selectedMonth }
+                    selectedYear={ this.state.selectedYear }
+                    displayMode={ this.state.displayMode }
+                    data={ this.state.data }
+                    onArrowClick={ updateSelectedDay }
+                />
             </div>
         );
     }

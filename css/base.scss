@@ -1,3 +1,4 @@
+@import './fonts.css';
 
 $main-type-color : #000;
 $main-typeface : 'Helvetica Neue', Helvetica, arial, sans-serif;
@@ -335,10 +336,45 @@ body {
             font-weight: 300;
         }
     }
+    &.month {
+        .tile {
+            height: 100%;
+            width: 3.2%;
+        }
+        .divider {
+            display: none;
+        }
+        .date-day {
+        }
+        .date-month {
+            display: none;
+        }
+        .date-year {
+            display: none;
+        }
+        .date-time-container {
+            background: 0;
+            bottom: .25em;
+            padding: 0;
+            left: 5%;
+            width: 90%;
+            text-align: center;
+
+        }
+        .time {
+            display: none;
+        }
+        .no-data {
+            top: 20%;
+            transform: rotate(90deg);
+            white-space: nowrap;
+            left: 0;
+        }
+    }
     .no-data {
         color: #fff;
         position: absolute;
-        top: 40%;
+        bottom: 40%;
         text-align: center;
         width: 100%;
 
@@ -402,5 +438,37 @@ body {
         bottom: -4px;
         width: 5em;
         z-index: 1;
+    }
+}
+.arrow {
+    position: absolute;
+    bottom: 2em;
+    color: #fff;
+    font-size: 4em;
+    z-index: 9;
+
+    .shadow {
+        color: #000;
+        filter: blur(6px);      
+    }
+    .chevron {
+        position: absolute;
+        left: 0;
+        top: 0;
+        cursor: pointer;
+    }
+
+    &.back-arrow {
+        left: 0;
+    }
+    &.next-arrow {
+        right: 0;
+    }
+    &.arrow-disabled {
+        opacity: .15;
+
+        .chevron {
+            cursor: default;
+        }
     }
 }
