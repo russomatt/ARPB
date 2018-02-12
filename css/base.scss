@@ -266,13 +266,17 @@ body {
 }
 .testContainer {
     img {
-        width: 500px;
+        width: 450px;
         height: auto;
+        float: left;
     }
-    .gradient {
-        width: 500px;
-        height: 332px;
-        border: 1px solid red;
+    #canvas-container {
+        float: left;
+    }
+    #gradients {
+        float: left;
+        width: 450px;
+        height: 476px;
     }
 }
 .tile {
